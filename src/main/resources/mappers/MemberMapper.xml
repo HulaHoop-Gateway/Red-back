@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hulahoop.redback.member.model.dao.MemberMapper">
+
+    <select id="selectAllMembers" resultType="com.hulahoop.redback.member.model.dto.MemberDTO">
+        SELECT
+            member_code,
+            name,
+            id,
+            password,
+            phone_num,
+            email,
+            address,
+            user_type,
+            notification_status
+        FROM T_Member
+    </select>
+
+</mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hulahoop.redback.merchant.model.dao.MerchantMapper">
+
+    <select id="selectAllMerchants" resultType="com.hulahoop.redback.merchant.model.dto.MerchantDTO">
+        SELECT
+            merchant_code,
+            merchant_name,
+            business_id,
+            category_name,
+            registration_date,
+            termination_date,
+            contract_status,
+            category_code
+        FROM T_Merchant
+        ORDER BY merchant_code ASC
+    </select>
+
+</mapper>

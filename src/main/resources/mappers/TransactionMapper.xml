@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hulahoop.redback.transaction.model.dao.TransactionMapper">
+
+    <select id="selectAllTransactions" resultType="com.hulahoop.redback.transaction.model.dto.TransactionDTO">
+        SELECT
+            transation_num,
+            member_code,
+            amount_used,
+            payment_date,
+            status,
+            start_date,
+            end_date,
+            merchant_code
+        FROM T_TransactionHistory
+        ORDER BY transation_num ASC
+    </select>
+
+</mapper>
