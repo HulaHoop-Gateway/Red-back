@@ -1,76 +1,132 @@
 package com.hulahoop.redback.merchant.model.dto;
 
+/**
+ * MerchantDTO
+ *
+ * 가맹점 정보를 담는 데이터 전송 객체 (DTO)
+ * - DB의 T_Merchant 테이블 컬럼과 매핑됨
+ * - 각 가맹점별 서버 상태(serverStatus) 포함
+ */
 public class MerchantDTO {
-    private String merchant_code;
-    private String merchant_name;
-    private String business_id;
-    private String category_name;
-    private String registration_date;
-    private String termination_date;
-    private String contract_status;
-    private String category_code;
 
-    public String getMerchant_code() {
-        return merchant_code;
+    // ✅ 가맹점 코드 (예: M000000001, B000000001)
+    private String merchantCode;
+
+    // ✅ 가맹점 이름 (예: 노바시네마 하남1점, 바이크웨이)
+    private String merchantName;
+
+    // ✅ 사업자번호 (예: 123-45-67890)
+    private String businessId;
+
+    // ✅ 카테고리명 (예: 영화, 자전거 등)
+    private String categoryName;
+
+    // ✅ 등록일
+    private String registrationDate;
+
+    // ✅ 종료일
+    private String terminationDate;
+
+    // ✅ 계약상태 (Y: 계약중, N: 해지)
+    private String contractStatus;
+
+    // ✅ 카테고리 코드 (예: Movie, Bike 등)
+    private String categoryCode;
+
+    // ✅ 서버 상태 (true: Alive / false: Down)
+    private boolean serverStatus;
+
+    // ───────────────────────────────
+    // ✅ Getter / Setter
+    // ───────────────────────────────
+
+    public String getMerchantCode() {
+        return merchantCode;
     }
 
-    public void setMerchant_code(String merchant_code) {
-        this.merchant_code = merchant_code;
+    public void setMerchantCode(String merchantCode) {
+        this.merchantCode = merchantCode;
     }
 
-    public String getMerchant_name() {
-        return merchant_name;
+    public String getMerchantName() {
+        return merchantName;
     }
 
-    public void setMerchant_name(String merchant_name) {
-        this.merchant_name = merchant_name;
+    public void setMerchantName(String merchantName) {
+        this.merchantName = merchantName;
     }
 
-    public String getBusiness_id() {
-        return business_id;
+    public String getBusinessId() {
+        return businessId;
     }
 
-    public void setBusiness_id(String business_id) {
-        this.business_id = business_id;
+    public void setBusinessId(String businessId) {
+        this.businessId = businessId;
     }
 
-    public String getCategory_name() {
-        return category_name;
+    public String getCategoryName() {
+        return categoryName;
     }
 
-    public void setCategory_name(String category_name) {
-        this.category_name = category_name;
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
-    public String getRegistration_date() {
-        return registration_date;
+    public String getRegistrationDate() {
+        return registrationDate;
     }
 
-    public void setRegistration_date(String registration_date) {
-        this.registration_date = registration_date;
+    public void setRegistrationDate(String registrationDate) {
+        this.registrationDate = registrationDate;
     }
 
-    public String getTermination_date() {
-        return termination_date;
+    public String getTerminationDate() {
+        return terminationDate;
     }
 
-    public void setTermination_date(String termination_date) {
-        this.termination_date = termination_date;
+    public void setTerminationDate(String terminationDate) {
+        this.terminationDate = terminationDate;
     }
 
-    public String getContract_status() {
-        return contract_status;
+    public String getContractStatus() {
+        return contractStatus;
     }
 
-    public void setContract_status(String contract_status) {
-        this.contract_status = contract_status;
+    public void setContractStatus(String contractStatus) {
+        this.contractStatus = contractStatus;
     }
 
-    public String getCategory_code() {
-        return category_code;
+    public String getCategoryCode() {
+        return categoryCode;
     }
 
-    public void setCategory_code(String category_code) {
-        this.category_code = category_code;
+    public void setCategoryCode(String categoryCode) {
+        this.categoryCode = categoryCode;
+    }
+
+    public boolean isServerStatus() {
+        return serverStatus;
+    }
+
+    public void setServerStatus(boolean serverStatus) {
+        this.serverStatus = serverStatus;
+    }
+
+    // ───────────────────────────────
+    // ✅ toString (디버깅용)
+    // ───────────────────────────────
+    @Override
+    public String toString() {
+        return "MerchantDTO{" +
+                "merchantCode='" + merchantCode + '\'' +
+                ", merchantName='" + merchantName + '\'' +
+                ", businessId='" + businessId + '\'' +
+                ", categoryName='" + categoryName + '\'' +
+                ", registrationDate='" + registrationDate + '\'' +
+                ", terminationDate='" + terminationDate + '\'' +
+                ", contractStatus='" + contractStatus + '\'' +
+                ", categoryCode='" + categoryCode + '\'' +
+                ", serverStatus=" + serverStatus +
+                '}';
     }
 }
