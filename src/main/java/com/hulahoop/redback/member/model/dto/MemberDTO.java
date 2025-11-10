@@ -1,18 +1,18 @@
 package com.hulahoop.redback.member.model.dto;
 
 public class MemberDTO {
-    private String member_code;
+    private String memberCode;        
     private String name;
     private String id;
     private String password;
-    private String phone_num;
+    private String phoneNum;
     private String email;
     private String address;
-    private String user_type;
-    private String notification_status;
+    private String userType;
+    private String notificationStatus;
 
-    public String getMember_code() { return member_code; }
-    public void setMember_code(String member_code) { this.member_code = member_code; }
+    public String getMemberCode() { return memberCode; }
+    public void setMemberCode(String memberCode) { this.memberCode = memberCode; }
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
@@ -23,8 +23,8 @@ public class MemberDTO {
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
 
-    public String getPhone_num() { return phone_num; }
-    public void setPhone_num(String phone_num) { this.phone_num = phone_num; }
+    public String getPhoneNum() { return phoneNum; }
+    public void setPhoneNum(String phoneNum) { this.phoneNum = phoneNum; }
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
@@ -32,9 +32,9 @@ public class MemberDTO {
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
 
-    public String getUser_type() { return user_type; }
-    public void setUser_type(String user_type) { this.user_type = user_type; }
+    public String getUserType() { return userType; }
+    public void setUserType(String userType) { this.userType = userType; }
 
-    public String getNotification_status() { return notification_status; }
-    public void setNotification_status(String notification_status) { this.notification_status = notification_status; }
+    public String getNotificationStatus() { return notificationStatus; }
+    public void setNotificationStatus(String notificationStatus) { this.notificationStatus = notificationStatus; }
 }

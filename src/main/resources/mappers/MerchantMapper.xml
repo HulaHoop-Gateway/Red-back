@@ -5,43 +5,21 @@
 
 <mapper namespace="com.hulahoop.redback.merchant.model.dao.MerchantMapper">
 
-    <!-- ==============================================================
-         ▷ MerchantMapper.xml
-         ▷ 가맹점 관련 SQL 매퍼
-         ▷ DTO: com.hulahoop.redback.merchant.model.dto.MerchantDTO
-         ============================================================== -->
-
-    <!-- 전체 가맹점 -->
-    <select id="selectAllMerchants" resultType="map">
-        SELECT
-            merchant_code,
-            merchant_name,
-            business_id,
-            category_name,
-            registration_date,
-            termination_date,
-            contract_status,
-            category_code
-        FROM T_Merchant
-    </select>
-
-    <!-- 매출 통계 (가맹점별 거래금액 합계) -->
-    <select id="selectMerchantUsageStats" resultType="map">
+    <!-- ✅ 전체 가맹점 운영정보 조회 -->
+    <select id="selectAllMerchants" resultType="com.hulahoop.redback.merchant.model.dto.MerchantDTO">
         SELECT
             m.merchant_code,
             m.merchant_name,
-            COUNT(t.transation_num) AS transaction_count,
-            COALESCE(SUM(t.amount_used), 0) AS total_amount
+            m.business_id,
+            c.category_name,
+            m.registration_date,
+            m.termination_date,
+            m.contract_status,
+            c.category_code
         FROM T_Merchant m
-                 LEFT JOIN T_TransactionHistory t ON m.merchant_code = t.merchant_code
-        GROUP BY m.merchant_code, m.merchant_name
+                 LEFT JOIN T_Brand b ON m.brand_code = b.brand_code
+                 LEFT JOIN T_Category c ON b.category_code = c.category_code
+        ORDER BY m.merchant_code
     </select>
-
-    <!-- 전체 거래금액 총합 -->
-    <select id="selectTotalAmount" resultType="decimal">
-        SELECT COALESCE(SUM(amount_used), 0) FROM T_TransactionHistory
-    </select>
-
-
 
 </mapper>

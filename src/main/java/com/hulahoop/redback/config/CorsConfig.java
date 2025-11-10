@@ -14,9 +14,9 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**")
-                        .allowedOrigins("http://localhost:3000")  // ✅ 프론트 포트
+                        // ✅ allowedOriginPatterns 사용해야 함 (Spring 6 이상)
+                        .allowedOriginPatterns("http://localhost:3000")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowedHeaders("*")
                         .allowCredentials(true);
             }
         };
