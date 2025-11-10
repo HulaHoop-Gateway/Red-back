@@ -3,38 +3,34 @@ package com.hulahoop.redback.merchant.model.dto;
 /**
  * MerchantDTO
  *
- * 가맹점 정보를 담는 데이터 전송 객체 (DTO)
- * - DB의 T_Merchant 테이블 컬럼과 매핑됨
- * - 각 가맹점별 서버 상태(serverStatus) 포함
+ * 가맹점 운영 정보를 담는 데이터 전송 객체 (DTO)
+ * - DB의 T_Merchant, T_Brand, T_Category 테이블 조인 결과와 매핑됨
  */
 public class MerchantDTO {
 
-    // ✅ 가맹점 코드 (예: M000000001, B000000001)
+    // ✅ 가맹점 코드 (예: M000000001)
     private String merchantCode;
 
-    // ✅ 가맹점 이름 (예: 노바시네마 하남1점, 바이크웨이)
+    // ✅ 가맹점 이름 (예: 노바시네마 하남1점)
     private String merchantName;
 
     // ✅ 사업자번호 (예: 123-45-67890)
     private String businessId;
 
-    // ✅ 카테고리명 (예: 영화, 자전거 등)
+    // ✅ 카테고리명 (예: 영화, 자전거)
     private String categoryName;
 
-    // ✅ 등록일
+    // ✅ 등록일 (계약 시작일)
     private String registrationDate;
 
-    // ✅ 종료일
+    // ✅ 종료일 (계약 만료일)
     private String terminationDate;
 
-    // ✅ 계약상태 (Y: 계약중, N: 해지)
+    // ✅ 계약상태 (Y: 계약중 / N: 해지)
     private String contractStatus;
 
-    // ✅ 카테고리 코드 (예: Movie, Bike 등)
+    // ✅ 카테고리 코드 (예: Movie, Bike)
     private String categoryCode;
-
-    // ✅ 서버 상태 (true: Alive / false: Down)
-    private boolean serverStatus;
 
     // ───────────────────────────────
     // ✅ Getter / Setter
@@ -104,14 +100,6 @@ public class MerchantDTO {
         this.categoryCode = categoryCode;
     }
 
-    public boolean isServerStatus() {
-        return serverStatus;
-    }
-
-    public void setServerStatus(boolean serverStatus) {
-        this.serverStatus = serverStatus;
-    }
-
     // ───────────────────────────────
     // ✅ toString (디버깅용)
     // ───────────────────────────────
@@ -126,7 +114,6 @@ public class MerchantDTO {
                 ", terminationDate='" + terminationDate + '\'' +
                 ", contractStatus='" + contractStatus + '\'' +
                 ", categoryCode='" + categoryCode + '\'' +
-                ", serverStatus=" + serverStatus +
                 '}';
     }
 }

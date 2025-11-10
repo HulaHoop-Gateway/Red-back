@@ -5,24 +5,77 @@
 
 <mapper namespace="com.hulahoop.redback.statistics.model.dao.StatisticsMapper">
 
-    <!-- 통계: 오늘 이전 결제 내역을 날짜별·가맹점별 집계 -->
-    <select id="selectDailyStatistics" resultType="com.hulahoop.redback.statistics.model.dto.StatisticsDTO">
-<![CDATA[
+    <!-- ✅ 가맹점별 일자별 매출 통계 (거래/환불/비중 포함, 문자 상태코드 버전) -->
+    <select id="selectDailyStatistics" parameterType="map" resultType="com.hulahoop.redback.statistics.model.dto.StatisticsDTO">
+        <![CDATA[
         SELECT
             t.merchant_code AS merchantCode,
             COALESCE(m.merchant_name, '알 수 없음') AS merchantName,
             DATE(t.payment_date) AS paymentDate,
-            COUNT(*) AS transactionCount,
-            SUM(t.amount_used) AS totalAmount
+
+            -- ✅ 거래 건수 (성공)
+            COUNT(CASE WHEN t.status = 'S' THEN 1 END) AS transactionCount,
+
+            -- ✅ 거래 비중 (%)
+            ROUND(
+            (COUNT(CASE WHEN t.status = 'S' THEN 1 END) * 100.0) /
+            NULLIF(
+            (SELECT COUNT(*)
+            FROM T_TransactionHistory t2
+            WHERE t2.status = 'S'
+            AND (
+            (#{startDate} IS NULL OR #{endDate} IS NULL)
+            OR (t2.payment_date BETWEEN #{startDate} AND #{endDate})
+            )
+            ), 0)
+                , 2) AS transactionRatio,
+
+            -- ✅ 총 결제 금액 (성공 거래)
+            SUM(CASE WHEN t.status = 'S' THEN t.amount_used ELSE 0 END) AS totalAmount,
+
+            -- ✅ 환불 건수
+            COUNT(CASE WHEN t.status = 'R' THEN 1 END) AS refundCount,
+
+            -- ✅ 환불 금액
+            SUM(CASE WHEN t.status = 'R' THEN t.amount_used ELSE 0 END) AS refundAmount,
+
+            -- ✅ 순매출 (결제금액 - 환불금액)
+            (
+            SUM(CASE WHEN t.status = 'S' THEN t.amount_used ELSE 0 END)
+            - SUM(CASE WHEN t.status = 'R' THEN t.amount_used ELSE 0 END)
+            ) AS netAmount,
+
+            -- ✅ 매출 비중 (%)
+            ROUND(
+            (
+            (
+            SUM(CASE WHEN t.status = 'S' THEN t.amount_used ELSE 0 END)
+            - SUM(CASE WHEN t.status = 'R' THEN t.amount_used ELSE 0 END)
+            ) * 100.0
+            ) /
+            NULLIF(
+            (
+            SELECT
+            SUM(CASE WHEN t3.status = 'S' THEN t3.amount_used ELSE 0 END)
+            - SUM(CASE WHEN t3.status = 'R' THEN t3.amount_used ELSE 0 END)
+            FROM T_TransactionHistory t3
+            WHERE (
+            (#{startDate} IS NULL OR #{endDate} IS NULL)
+            OR (t3.payment_date BETWEEN #{startDate} AND #{endDate})
+            )
+            ), 0)
+                , 2) AS ratioPercentage
+
         FROM T_TransactionHistory t
             LEFT JOIN T_Merchant m ON t.merchant_code = m.merchant_code
-        WHERE t.payment_date < CURRENT_DATE()
+
+        WHERE
+            (#{startDate} IS NULL OR #{endDate} IS NULL)
+           OR (t.payment_date BETWEEN #{startDate} AND #{endDate})
+
         GROUP BY t.merchant_code, m.merchant_name, DATE(t.payment_date)
-        ORDER BY paymentDate DESC
+        ORDER BY paymentDate DESC, merchantName ASC
         ]]>
-</select>
-
-
-
+    </select>
 
 </mapper>

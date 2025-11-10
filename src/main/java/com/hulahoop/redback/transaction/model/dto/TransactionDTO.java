@@ -1,61 +1,61 @@
 package com.hulahoop.redback.transaction.model.dto;
 
 public class TransactionDTO {
-    private int transation_num;
-    private String member_code;
-    private int amount_used;
-    private String payment_date;
-    private int status;
-    private String start_date;
-    private String end_date;
-    private String merchant_code;
+    private int transationNum;
+    private String memberCode;
+    private int amountUsed;
+    private String paymentDate;
+    private String status;
+    private String startDate;
+    private String endDate;
+    private String merchantCode;
 
-    public int getTransation_num() {
-        return transation_num;
+    public int getTransationNum() {
+        return transationNum;
     }
-    public void setTransation_num(int transation_num) {
-        this.transation_num = transation_num;
+    public void setTransationNum(int transationNum) {
+        this.transationNum = transationNum;
     }
-    public String getMember_code() {
-        return member_code;
+    public String getMemberCode() {
+        return memberCode;
     }
-    public void setMember_code(String member_code) {
-        this.member_code = member_code;
+    public void setMemberCode(String memberCode) {
+        this.memberCode = memberCode;
     }
-    public int getAmount_used() {
-        return amount_used;
+    public int getAmountUsed() {
+        return amountUsed;
     }
-    public void setAmount_used(int amount_used) {
-        this.amount_used = amount_used;
+    public void setAmountUsed(int amountUsed) {
+        this.amountUsed = amountUsed;
     }
-    public String getPayment_date() {
-        return payment_date;
+    public String getPaymentDate() {
+        return paymentDate;
     }
-    public void setPayment_date(String payment_date) {
-        this.payment_date = payment_date;
+    public void setPaymentDate(String paymentDate) {
+        this.paymentDate = paymentDate;
     }
-    public int getStatus() {
+    public String getStatus() {
         return status;
     }
-    public void setStatus(int status) {
+    public void setStatus(String status) {
         this.status = status;
     }
-    public String getStart_date() {
-        return start_date;
+    public String getStartDate() {
+        return startDate;
     }
-    public void setStart_date(String start_date) {
-        this.start_date = start_date;
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
     }
-    public String getEnd_date() {
-        return end_date;
+    public String getEndDate() {
+        return endDate;
     }
-    public void setEnd_date(String end_date) {
-        this.end_date = end_date;
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
     }
-    public String getMerchant_code() {
-        return merchant_code;
+    public String getMerchantCode() {
+        return merchantCode;
     }
-    public void setMerchant_code(String merchant_code) {
-        this.merchant_code = merchant_code;
+    public void setMerchantCode(String merchantCode) {
+        this.merchantCode = merchantCode;
     }
 }
