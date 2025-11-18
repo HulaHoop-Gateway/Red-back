@@ -22,4 +22,12 @@
         ORDER BY m.merchant_code
     </select>
 
+    <!-- ⭐ branch_name(merchant_name) → merchant_code 조회 기능 추가 -->
+    <select id="findMerchantCodeByName" resultType="string" parameterType="string">
+        SELECT merchant_code
+        FROM T_Merchant
+        WHERE merchant_name = #{merchantName}
+            LIMIT 1
+    </select>
+
 </mapper>

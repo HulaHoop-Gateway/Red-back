@@ -5,18 +5,43 @@
 
 <mapper namespace="com.hulahoop.redback.transaction.model.dao.TransactionMapper">
 
+    <!-- 🔹 전체 거래 내역 조회 -->
     <select id="selectAllTransactions" resultType="com.hulahoop.redback.transaction.model.dto.TransactionDTO">
         SELECT
-            transation_num,
-            member_code,
-            amount_used,
-            payment_date,
-            status,
-            start_date,
-            end_date,
-            merchant_code
+        transation_num         AS transationNum,
+        member_code            AS memberCode,
+        amount_used            AS amountUsed,
+        payment_date           AS paymentDate,
+        status,
+        start_date             AS startDate,
+        end_date               AS endDate,
+        merchant_code          AS merchantCode,
+        original_transation_num AS originalTransationNum   <!-- ⭐ 추가됨 -->
         FROM T_TransactionHistory
         ORDER BY transation_num ASC
     </select>
+
+    <!-- 🔥 새로운 거래(insert) -->
+    <insert id="insertTransaction" parameterType="com.hulahoop.redback.transaction.model.dto.TransactionDTO">
+        INSERT INTO T_TransactionHistory (
+        member_code,
+        amount_used,
+        payment_date,
+        status,
+        start_date,
+        end_date,
+        merchant_code,
+        original_transation_num     <!-- ⭐ 추가됨 -->
+        ) VALUES (
+        #{memberCode},
+        #{amountUsed},
+        NOW(),
+        #{status},
+        #{startDate},
+        #{endDate},
+        #{merchantCode},
+        #{originalTransationNum}     <!-- ⭐ 추가됨 -->
+        )
+    </insert>
 
 </mapper>

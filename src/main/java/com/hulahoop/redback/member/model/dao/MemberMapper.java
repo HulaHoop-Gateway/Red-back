@@ -6,5 +6,10 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface MemberMapper {
+
+    // 기존 기능 유지
     List<MemberDTO> selectAllMembers();
+
+    // ⭐ phone_number 로 member_code 조회
+    String findMemberCodeByPhone(String phoneNumber);
 }
