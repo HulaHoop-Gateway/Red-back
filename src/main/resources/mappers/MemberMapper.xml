@@ -5,6 +5,7 @@
 
 <mapper namespace="com.hulahoop.redback.member.model.dao.MemberMapper">
 
+    <!-- 기존 전체 회원 조회 -->
     <select id="selectAllMembers" resultType="com.hulahoop.redback.member.model.dto.MemberDTO">
         SELECT
             member_code,
@@ -17,6 +18,13 @@
             user_type,
             notification_status
         FROM T_Member
+    </select>
+
+    <!-- ⭐ 전화번호로 member_code 조회 (추가됨) -->
+    <select id="findMemberCodeByPhone" resultType="string" parameterType="string">
+        SELECT member_code
+        FROM T_Member
+        WHERE phone_num = #{phoneNumber}
     </select>
 
 </mapper>

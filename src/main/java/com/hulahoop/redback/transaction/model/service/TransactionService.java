@@ -14,7 +14,13 @@ public class TransactionService {
     @Autowired
     private TransactionMapper transactionMapper;
 
+    // 🔹 전체 거래 내역 조회
     public List<TransactionDTO> getAllTransactions() {
         return transactionMapper.selectAllTransactions();
+    }
+
+    // 🔥 영화 예매 시 트랜잭션 저장
+    public int insertTransaction(TransactionDTO dto) {
+        return transactionMapper.insertTransaction(dto);
     }
 }
