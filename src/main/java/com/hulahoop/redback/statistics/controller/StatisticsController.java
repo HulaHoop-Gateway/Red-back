@@ -1,20 +1,23 @@
 package com.hulahoop.redback.statistics.controller;
 
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.hulahoop.redback.statistics.model.dto.StatisticsDTO;
 import com.hulahoop.redback.statistics.model.service.StatisticsService;
+import com.hulahoop.redback.common.paging.dto.PageRequestDTO;
+import com.hulahoop.redback.common.paging.dto.PageResponseDTO;
 
 @RestController
 @RequestMapping("/api/statistics")
 public class StatisticsController {
 
-    @Autowired
-    private StatisticsService statisticsService;
+    private final StatisticsService statisticsService;
+
+    public StatisticsController(StatisticsService statisticsService) {
+        this.statisticsService = statisticsService;
+    }
 
     @GetMapping
-    public List<StatisticsDTO> getDailyStatistics() {
-        return statisticsService.getDailyStatistics();
+    public PageResponseDTO<StatisticsDTO> getStatistics(PageRequestDTO pageRequestDTO) {
+        return statisticsService.getStatistics(pageRequestDTO);
     }
 }

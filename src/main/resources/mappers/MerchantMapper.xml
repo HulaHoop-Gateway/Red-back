@@ -8,22 +8,26 @@
     <!-- ✅ 전체 가맹점 운영정보 조회 -->
     <select id="selectAllMerchants" resultType="com.hulahoop.redback.merchant.model.dto.MerchantDTO">
         SELECT
-            m.merchant_code,
-            m.merchant_name,
-            m.business_id,
-            c.category_name,
-            m.registration_date,
-            m.termination_date,
-            m.contract_status,
-            c.category_code
+        m.merchant_code AS merchantCode,
+        m.merchant_name AS merchantName,
+        m.business_id AS businessId,
+        c.category_name AS categoryName,
+        c.category_code AS categoryCode,
+        b.brand_code AS brandCode,        <!-- 🔥 추가된 부분 -->
+        b.brand_name AS brandName,        <!-- 🔥 선택적으로 추가 가능 -->
+        m.registration_date AS registrationDate,
+        m.termination_date AS terminationDate,
+        m.contract_status AS contractStatus
         FROM T_Merchant m
-                 LEFT JOIN T_Brand b ON m.brand_code = b.brand_code
-                 LEFT JOIN T_Category c ON b.category_code = c.category_code
+        LEFT JOIN T_Brand b ON m.brand_code = b.brand_code
+        LEFT JOIN T_Category c ON b.category_code = c.category_code
         ORDER BY m.merchant_code
     </select>
 
-    <!-- ⭐ branch_name(merchant_name) → merchant_code 조회 기능 추가 -->
-    <select id="findMerchantCodeByName" resultType="string" parameterType="string">
+    <!-- ⭐ branch_name(merchant_name) → merchant_code 조회 기능 -->
+    <select id="findMerchantCodeByName"
+            resultType="string"
+            parameterType="string">
         SELECT merchant_code
         FROM T_Merchant
         WHERE merchant_name = #{merchantName}

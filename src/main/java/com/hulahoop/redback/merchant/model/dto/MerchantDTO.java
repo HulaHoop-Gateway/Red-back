@@ -8,32 +8,37 @@ package com.hulahoop.redback.merchant.model.dto;
  */
 public class MerchantDTO {
 
-    // ✅ 가맹점 코드 (예: M000000001)
+    // ✅ 가맹점 코드
     private String merchantCode;
 
-    // ✅ 가맹점 이름 (예: 노바시네마 하남1점)
+    // ✅ 가맹점 이름
     private String merchantName;
 
-    // ✅ 사업자번호 (예: 123-45-67890)
+    // ✅ 사업자번호
     private String businessId;
 
-    // ✅ 카테고리명 (예: 영화, 자전거)
+    // ✅ 카테고리명
     private String categoryName;
 
-    // ✅ 등록일 (계약 시작일)
+    // ✅ 등록일
     private String registrationDate;
 
-    // ✅ 종료일 (계약 만료일)
+    // ✅ 종료일
     private String terminationDate;
 
-    // ✅ 계약상태 (Y: 계약중 / N: 해지)
+    // ✅ 계약상태
     private String contractStatus;
 
-    // ✅ 카테고리 코드 (예: Movie, Bike)
+    // ✅ 카테고리 코드 (Movie, Bike 등)
     private String categoryCode;
 
+    // 🔥🔥🔥 추가된 필드 (프론트 필터링에 반드시 필요)
+    private String brandCode;   // 예: NB01
+    private String brandName;   // 예: 노바시네마
+
+
     // ───────────────────────────────
-    // ✅ Getter / Setter
+    // Getter / Setter
     // ───────────────────────────────
 
     public String getMerchantCode() {
@@ -100,9 +105,22 @@ public class MerchantDTO {
         this.categoryCode = categoryCode;
     }
 
-    // ───────────────────────────────
-    // ✅ toString (디버깅용)
-    // ───────────────────────────────
+    public String getBrandCode() {        // ← 추가
+        return brandCode;
+    }
+
+    public void setBrandCode(String brandCode) { // ← 추가
+        this.brandCode = brandCode;
+    }
+
+    public String getBrandName() {        // ← 추가
+        return brandName;
+    }
+
+    public void setBrandName(String brandName) { // ← 추가
+        this.brandName = brandName;
+    }
+
     @Override
     public String toString() {
         return "MerchantDTO{" +
@@ -114,6 +132,8 @@ public class MerchantDTO {
                 ", terminationDate='" + terminationDate + '\'' +
                 ", contractStatus='" + contractStatus + '\'' +
                 ", categoryCode='" + categoryCode + '\'' +
+                ", brandCode='" + brandCode + '\'' +
+                ", brandName='" + brandName + '\'' +
                 '}';
     }
 }

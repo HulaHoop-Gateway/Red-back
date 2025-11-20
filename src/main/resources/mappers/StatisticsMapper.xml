@@ -5,77 +5,144 @@
 
 <mapper namespace="com.hulahoop.redback.statistics.model.dao.StatisticsMapper">
 
-    <!-- ✅ 가맹점별 일자별 매출 통계 (거래/환불/비중 포함, 문자 상태코드 버전) -->
-    <select id="selectDailyStatistics" parameterType="map" resultType="com.hulahoop.redback.statistics.model.dto.StatisticsDTO">
-        <![CDATA[
+    <!-- ========================================================= -->
+    <!-- 📌 1) 통계 목록 조회 (페이징 + 필터 + 정렬 + 비중 계산)     -->
+    <!-- ========================================================= -->
+    <select id="selectStatistics"
+            parameterType="com.hulahoop.redback.common.paging.dto.PageRequestDTO"
+            resultType="com.hulahoop.redback.statistics.model.dto.StatisticsDTO">
+
         SELECT
-            t.merchant_code AS merchantCode,
-            COALESCE(m.merchant_name, '알 수 없음') AS merchantName,
-            DATE(t.payment_date) AS paymentDate,
+        t.merchant_code AS merchantCode,
+        COALESCE(m.merchant_name, '알 수 없음') AS merchantName,
+        DATE(t.payment_date) AS paymentDate,
 
-            -- ✅ 거래 건수 (성공)
-            COUNT(CASE WHEN t.status = 'S' THEN 1 END) AS transactionCount,
+        COUNT(CASE WHEN t.status = 'S' THEN 1 END) AS transactionCount,
 
-            -- ✅ 거래 비중 (%)
-            ROUND(
-            (COUNT(CASE WHEN t.status = 'S' THEN 1 END) * 100.0) /
-            NULLIF(
-            (SELECT COUNT(*)
-            FROM T_TransactionHistory t2
-            WHERE t2.status = 'S'
-            AND (
-            (#{startDate} IS NULL OR #{endDate} IS NULL)
-            OR (t2.payment_date BETWEEN #{startDate} AND #{endDate})
-            )
-            ), 0)
-                , 2) AS transactionRatio,
+        ROUND(
+        (COUNT(CASE WHEN t.status = 'S' THEN 1 END) * 100.0) /
+        NULLIF((
+        SELECT COUNT(*)
+        FROM T_TransactionHistory t2
+        WHERE t2.status = 'S'
+        <if test="startDate != null and endDate != null">
+            AND t2.payment_date BETWEEN #{startDate} AND #{endDate}
+        </if>
+        ), 0)
+        , 2) AS transactionRatio,
 
-            -- ✅ 총 결제 금액 (성공 거래)
-            SUM(CASE WHEN t.status = 'S' THEN t.amount_used ELSE 0 END) AS totalAmount,
+        SUM(CASE WHEN t.status = 'S' THEN t.amount_used ELSE 0 END) AS totalAmount,
 
-            -- ✅ 환불 건수
-            COUNT(CASE WHEN t.status = 'R' THEN 1 END) AS refundCount,
+        COUNT(CASE WHEN t.status = 'R' THEN 1 END) AS refundCount,
 
-            -- ✅ 환불 금액
-            SUM(CASE WHEN t.status = 'R' THEN t.amount_used ELSE 0 END) AS refundAmount,
+        SUM(CASE WHEN t.status = 'R' THEN t.amount_used ELSE 0 END) AS refundAmount,
 
-            -- ✅ 순매출 (결제금액 - 환불금액)
-            (
-            SUM(CASE WHEN t.status = 'S' THEN t.amount_used ELSE 0 END)
-            - SUM(CASE WHEN t.status = 'R' THEN t.amount_used ELSE 0 END)
-            ) AS netAmount,
+        (
+        SUM(CASE WHEN t.status = 'S' THEN t.amount_used ELSE 0 END)
+        - SUM(CASE WHEN t.status = 'R' THEN t.amount_used ELSE 0 END)
+        ) AS netAmount,
 
-            -- ✅ 매출 비중 (%)
-            ROUND(
-            (
-            (
-            SUM(CASE WHEN t.status = 'S' THEN t.amount_used ELSE 0 END)
-            - SUM(CASE WHEN t.status = 'R' THEN t.amount_used ELSE 0 END)
-            ) * 100.0
-            ) /
-            NULLIF(
-            (
-            SELECT
-            SUM(CASE WHEN t3.status = 'S' THEN t3.amount_used ELSE 0 END)
-            - SUM(CASE WHEN t3.status = 'R' THEN t3.amount_used ELSE 0 END)
-            FROM T_TransactionHistory t3
-            WHERE (
-            (#{startDate} IS NULL OR #{endDate} IS NULL)
-            OR (t3.payment_date BETWEEN #{startDate} AND #{endDate})
-            )
-            ), 0)
-                , 2) AS ratioPercentage
+        ROUND(
+        (
+        (
+        SUM(CASE WHEN t.status = 'S' THEN t.amount_used ELSE 0 END)
+        - SUM(CASE WHEN t.status = 'R' THEN t.amount_used ELSE 0 END)
+        ) * 100.0
+        )
+        /
+        NULLIF((
+        SELECT
+        SUM(CASE WHEN t3.status = 'S' THEN t3.amount_used ELSE 0 END)
+        - SUM(CASE WHEN t3.status = 'R' THEN t3.amount_used ELSE 0 END)
+        FROM T_TransactionHistory t3
+        <if test="startDate != null and endDate != null">
+            WHERE t3.payment_date BETWEEN #{startDate} AND #{endDate}
+        </if>
+        ), 0)
+        , 2) AS ratioPercentage
 
         FROM T_TransactionHistory t
-            LEFT JOIN T_Merchant m ON t.merchant_code = m.merchant_code
+        LEFT JOIN T_Merchant m ON t.merchant_code = m.merchant_code
+        LEFT JOIN T_Brand b ON m.brand_code = b.brand_code   <!-- 🔥 추가됨 -->
 
-        WHERE
-            (#{startDate} IS NULL OR #{endDate} IS NULL)
-           OR (t.payment_date BETWEEN #{startDate} AND #{endDate})
+        WHERE 1=1
+        <if test="startDate != null and endDate != null">
+            AND t.payment_date BETWEEN #{startDate} AND #{endDate}
+        </if>
+
+        <if test="merchantCode != null and merchantCode != ''">
+            AND t.merchant_code = #{merchantCode}
+        </if>
+
+        <!-- 🔥 카테고리 필터 정상화 -->
+        <if test="categoryCode != null and categoryCode != ''">
+            AND b.category_code = #{categoryCode}
+        </if>
+
+        <!-- 🔥 브랜드 필터 추가 -->
+        <if test="brandCode != null and brandCode != ''">
+            AND b.brand_code = #{brandCode}
+        </if>
 
         GROUP BY t.merchant_code, m.merchant_name, DATE(t.payment_date)
-        ORDER BY paymentDate DESC, merchantName ASC
-        ]]>
+
+        <choose>
+            <when test="sort == 'transaction_asc'">ORDER BY transactionCount ASC</when>
+            <when test="sort == 'transaction_desc'">ORDER BY transactionCount DESC</when>
+
+            <when test="sort == 'amount_asc'">ORDER BY totalAmount ASC</when>
+            <when test="sort == 'amount_desc'">ORDER BY totalAmount DESC</when>
+
+            <when test="sort == 'refund_asc'">ORDER BY refundCount ASC</when>
+            <when test="sort == 'refund_desc'">ORDER BY refundCount DESC</when>
+
+            <when test="sort == 'net_asc'">ORDER BY netAmount ASC</when>
+            <when test="sort == 'net_desc'">ORDER BY netAmount DESC</when>
+
+            <when test="sort == 'percentage_asc'">ORDER BY ratioPercentage ASC</when>
+            <when test="sort == 'percentage_desc'">ORDER BY ratioPercentage DESC</when>
+
+            <when test="sort == 'ratio_asc'">ORDER BY transactionRatio ASC</when>
+            <when test="sort == 'ratio_desc'">ORDER BY transactionRatio DESC</when>
+
+            <when test="sort == 'date_asc'">ORDER BY paymentDate ASC</when>
+            <otherwise>ORDER BY paymentDate DESC</otherwise>
+        </choose>
+
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+
+    <!-- ========================================================= -->
+    <!-- 📌 2) 전체 카운트 조회 (페이징용)                         -->
+    <!-- ========================================================= -->
+    <select id="countStatistics"
+            parameterType="com.hulahoop.redback.common.paging.dto.PageRequestDTO"
+            resultType="long">
+
+        SELECT COUNT(*) FROM (
+        SELECT 1
+        FROM T_TransactionHistory t
+        LEFT JOIN T_Merchant m ON t.merchant_code = m.merchant_code
+
+        WHERE 1=1
+        <if test="startDate != null and endDate != null">
+            AND t.payment_date BETWEEN #{startDate} AND #{endDate}
+        </if>
+
+        <if test="merchantCode != null and merchantCode != ''">
+            AND t.merchant_code = #{merchantCode}
+        </if>
+
+        <if test="categoryCode != null and categoryCode != ''">
+            AND m.brand_code IN (
+            SELECT brand_code FROM T_Brand WHERE category_code = #{categoryCode}
+            )
+        </if>
+
+        GROUP BY t.merchant_code, DATE(t.payment_date)
+        ) AS sub
+
     </select>
 
 </mapper>
