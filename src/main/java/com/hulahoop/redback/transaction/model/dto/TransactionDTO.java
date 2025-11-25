@@ -2,7 +2,7 @@ package com.hulahoop.redback.transaction.model.dto;
 
 public class TransactionDTO {
 
-    private int transationNum;
+    private int transactionNum;
     private String memberCode;
 
     private String phoneNum;
@@ -13,43 +13,16 @@ public class TransactionDTO {
     private String endDate;
     private String merchantCode;
 
-    // ⭐ 추가됨: 취소 거래일 경우 원본 거래번호
-    private Integer originalTransationNum;
+    private Integer originalTransactionNum;
 
-    public TransactionDTO() {
+    public TransactionDTO() {}
+
+    public int getTransactionNum() {
+        return transactionNum;
     }
 
-    // 🔥 언더스코어 JSON → 카멜케이스 필드 자동 매핑 생성자
-    public TransactionDTO(
-            int transationNum,
-            String memberCode,
-            String phone_num,
-            int amount_used,
-            String payment_date,
-            String status,
-            String start_date,
-            String end_date,
-            String merchant_code
-    ) {
-        this.transationNum = transationNum;
-        this.memberCode = memberCode;
-
-        // ⭐ 언더스코어 JSON 필드를 DTO 변수에 매핑
-        this.phoneNum = phone_num;
-        this.amountUsed = amount_used;
-        this.paymentDate = payment_date;
-        this.status = status;
-        this.startDate = start_date;
-        this.endDate = end_date;
-        this.merchantCode = merchant_code;
-    }
-
-    public int getTransationNum() {
-        return transationNum;
-    }
-
-    public void setTransationNum(int transationNum) {
-        this.transationNum = transationNum;
+    public void setTransactionNum(int transactionNum) {
+        this.transactionNum = transactionNum;
     }
 
     public String getMemberCode() {
@@ -116,28 +89,11 @@ public class TransactionDTO {
         this.merchantCode = merchantCode;
     }
 
-    // ⭐ 추가: 취소 시 원 거래번호 Getter/Setter
-    public Integer getOriginalTransationNum() {
-        return originalTransationNum;
+    public Integer getOriginalTransactionNum() {
+        return originalTransactionNum;
     }
 
-    public void setOriginalTransationNum(Integer originalTransationNum) {
-        this.originalTransationNum = originalTransationNum;
-    }
-
-    @Override
-    public String toString() {
-        return "TransactionDTO{" +
-                "transationNum=" + transationNum +
-                ", memberCode='" + memberCode + '\'' +
-                ", phoneNum='" + phoneNum + '\'' +
-                ", amountUsed=" + amountUsed +
-                ", paymentDate='" + paymentDate + '\'' +
-                ", status='" + status + '\'' +
-                ", startDate='" + startDate + '\'' +
-                ", endDate='" + endDate + '\'' +
-                ", merchantCode='" + merchantCode + '\'' +
-                ", originalTransationNum=" + originalTransationNum +
-                '}';
+    public void setOriginalTransactionNum(Integer originalTransactionNum) {
+        this.originalTransactionNum = originalTransactionNum;
     }
 }

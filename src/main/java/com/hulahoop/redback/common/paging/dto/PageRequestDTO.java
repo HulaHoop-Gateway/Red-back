@@ -8,18 +8,21 @@ public class PageRequestDTO {
     private String startDate;    // 검색 시작일
     private String endDate;      // 검색 종료일
 
+    private String paymentDate;  // 단일 결제일 필터
+
     private String merchantCode; // 가맹점 필터
     private String categoryCode; // 카테고리 필터
-    private String brandCode;    // 🔥 브랜드 필터 (추가됨)
+    private String brandCode;    // 브랜드 필터
 
-    private String sort;         // 정렬 옵션 (amount_desc 등)
+    private String sort;         // 정렬 옵션
+
+    private String keyword;      // 검색어 필터
 
     public PageRequestDTO() {
         this.page = 1;
         this.size = 10;
     }
 
-    /* ======== Getter / Setter ======== */
     public int getPage() {
         return page <= 0 ? 1 : page;
     }
@@ -56,6 +59,14 @@ public class PageRequestDTO {
         this.endDate = endDate;
     }
 
+    public String getPaymentDate() {
+        return paymentDate;
+    }
+
+    public void setPaymentDate(String paymentDate) {
+        this.paymentDate = paymentDate;
+    }
+
     public String getMerchantCode() {
         return merchantCode;
     }
@@ -86,5 +97,13 @@ public class PageRequestDTO {
 
     public void setSort(String sort) {
         this.sort = sort;
+    }
+
+    public String getKeyword() {
+        return keyword;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
     }
 }
