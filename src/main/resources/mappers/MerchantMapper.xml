@@ -5,26 +5,65 @@
 
 <mapper namespace="com.hulahoop.redback.merchant.model.dao.MerchantMapper">
 
-    <!-- ✅ 전체 가맹점 운영정보 조회 -->
-    <select id="selectAllMerchants" resultType="com.hulahoop.redback.merchant.model.dto.MerchantDTO">
+    <!-- ✅ 페이징 + 검색 (keyword optional) -->
+    <select id="selectMerchantsPaged"
+            parameterType="com.hulahoop.redback.common.paging.dto.PageRequestDTO"
+            resultType="com.hulahoop.redback.merchant.model.dto.MerchantDTO">
+
         SELECT
         m.merchant_code AS merchantCode,
         m.merchant_name AS merchantName,
         m.business_id AS businessId,
-        c.category_name AS categoryName,
+        b.brand_code AS brandCode,
+        b.brand_name AS brandName,
         c.category_code AS categoryCode,
-        b.brand_code AS brandCode,        <!-- 🔥 추가된 부분 -->
-        b.brand_name AS brandName,        <!-- 🔥 선택적으로 추가 가능 -->
+        c.category_name AS categoryName,
         m.registration_date AS registrationDate,
         m.termination_date AS terminationDate,
         m.contract_status AS contractStatus
         FROM T_Merchant m
         LEFT JOIN T_Brand b ON m.brand_code = b.brand_code
         LEFT JOIN T_Category c ON b.category_code = c.category_code
+
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (
+                m.merchant_name LIKE CONCAT('%', #{keyword}, '%')
+                OR m.merchant_code LIKE CONCAT('%', #{keyword}, '%')
+                OR m.business_id LIKE CONCAT('%', #{keyword}, '%')
+                )
+            </if>
+        </where>
+
         ORDER BY m.merchant_code
+        LIMIT #{size} OFFSET #{offset}
     </select>
 
-    <!-- ⭐ branch_name(merchant_name) → merchant_code 조회 기능 -->
+
+    <!-- ✅ 총 개수 조회 (동일 조건 적용) -->
+    <select id="countMerchants"
+            parameterType="com.hulahoop.redback.common.paging.dto.PageRequestDTO"
+            resultType="long">
+
+        SELECT COUNT(*)
+        FROM T_Merchant m
+        LEFT JOIN T_Brand b ON m.brand_code = b.brand_code
+        LEFT JOIN T_Category c ON b.category_code = c.category_code
+
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (
+                m.merchant_name LIKE CONCAT('%', #{keyword}, '%')
+                OR m.merchant_code LIKE CONCAT('%', #{keyword}, '%')
+                OR m.business_id LIKE CONCAT('%', #{keyword}, '%')
+                )
+            </if>
+        </where>
+
+    </select>
+
+
+    <!-- ✅ 가맹점명 → merchant_code 조회 -->
     <select id="findMerchantCodeByName"
             resultType="string"
             parameterType="string">

@@ -4,16 +4,47 @@
 
 <mapper namespace="com.hulahoop.redback.monitor.model.dao.BrandMapper">
 
-    <!-- ✅ 브랜드 목록 조회 -->
-    <select id="selectAllBrands" resultType="com.hulahoop.redback.monitor.model.dto.BrandDTO">
+    <select id="selectServersPaged"
+            parameterType="com.hulahoop.redback.common.paging.dto.PageRequestDTO"
+            resultType="map">
+
         SELECT
-            brand_code AS brandCode,
-            brand_name AS brandName,
-            category_code AS categoryCode,
-            category_name AS categoryName,
-            description
-        FROM T_Brand
-        ORDER BY brand_name ASC
+        b.brand_code AS brandCode,
+        b.brand_name AS brandName,
+        b.category_code AS categoryCode,
+        b.category_name AS categoryName,
+        b.description
+        FROM T_Brand b
+
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (
+                b.brand_name LIKE CONCAT('%', #{keyword}, '%')
+                OR b.category_name LIKE CONCAT('%', #{keyword}, '%')
+                )
+            </if>
+        </where>
+
+        ORDER BY b.brand_name ASC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="countServers"
+            parameterType="com.hulahoop.redback.common.paging.dto.PageRequestDTO"
+            resultType="long">
+
+        SELECT COUNT(*)
+        FROM T_Brand b
+
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (
+                b.brand_name LIKE CONCAT('%', #{keyword}, '%')
+                OR b.category_name LIKE CONCAT('%', #{keyword}, '%')
+                )
+            </if>
+        </where>
+
     </select>
 
 </mapper>

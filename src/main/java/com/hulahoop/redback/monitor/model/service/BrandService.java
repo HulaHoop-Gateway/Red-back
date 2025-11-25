@@ -1,10 +1,13 @@
 package com.hulahoop.redback.monitor.model.service;
 
+import com.hulahoop.redback.common.paging.dto.PageRequestDTO;
+import com.hulahoop.redback.common.paging.dto.PageResponseDTO;
 import com.hulahoop.redback.config.ServerConfig;
 import com.hulahoop.redback.monitor.model.dao.BrandMapper;
-import com.hulahoop.redback.monitor.model.dto.BrandDTO;
 import org.springframework.stereotype.Service;
+
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class BrandService {
@@ -17,38 +20,41 @@ public class BrandService {
         this.serverConfig = serverConfig;
     }
 
-    // ✅ DB 브랜드 + config 서버 병합
-    public List<Map<String, Object>> getAllBrandServers() {
-        List<BrandDTO> brands = brandMapper.selectAllBrands();
-        List<ServerConfig.ServerInfo> servers = serverConfig.getServers();
-        List<Map<String, Object>> result = new ArrayList<>();
+    public PageResponseDTO<Map<String, Object>> getMergedServersPaged(PageRequestDTO requestDTO) {
 
-        for (BrandDTO brand : brands) {
-            Optional<ServerConfig.ServerInfo> matched = servers.stream()
-                    .filter(s -> s.getBrandCode().equals(brand.getBrandCode()))
-                    .findFirst();
+        List<Map<String, Object>> brands =
+                brandMapper.selectServersPaged(requestDTO);
 
-            Map<String, Object> map = new HashMap<>();
-            map.put("brandCode", brand.getBrandCode());
-            map.put("brandName", brand.getBrandName());
-            map.put("categoryCode", brand.getCategoryCode());
-            map.put("categoryName", brand.getCategoryName());
-            map.put("description", brand.getDescription());
+        long total =
+                brandMapper.countServers(requestDTO);
 
-            if (matched.isPresent()) {
-                ServerConfig.ServerInfo s = matched.get();
-                map.put("baseUrl", s.getBaseUrl());
-                map.put("port", s.getPort());
-                map.put("healthPath", s.getHealthPath());
-            } else {
-                map.put("baseUrl", "N/A");
-                map.put("port", null);
-                map.put("healthPath", "N/A");
-            }
+        List<Map<String, Object>> merged = brands.stream().map(b -> {
+            Map<String, Object> map = new HashMap<>(b);
 
-            result.add(map);
-        }
+            serverConfig.getServers().stream()
+                    .filter(s -> s.getBrandCode().equals(b.get("brandCode")))
+                    .findFirst()
+                    .ifPresentOrElse(
+                            s -> {
+                                map.put("baseUrl", s.getBaseUrl());
+                                map.put("port", s.getPort());
+                                map.put("healthPath", s.getHealthPath());
+                            },
+                            () -> {
+                                map.put("baseUrl", null);
+                                map.put("port", null);
+                                map.put("healthPath", null);
+                            }
+                    );
 
-        return result;
+            return map;
+        }).collect(Collectors.toList());
+
+        return new PageResponseDTO<>(
+                merged,
+                requestDTO.getPage(),
+                requestDTO.getSize(),
+                total
+        );
     }
 }
