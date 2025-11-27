@@ -25,7 +25,7 @@ public class DashboardService {
 
         dto.setDailyTransactions(dashboardMapper.selectDailyTransactions());
         dto.setMonthlyTransactions(dashboardMapper.selectMonthlyTransactions());
-        dto.setCategoryRatio(dashboardMapper.selectMerchantUsage());
+        dto.setCategoryRatio(dashboardMapper.selectCategoryRatio());
 
         return dto;
     }

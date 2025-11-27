@@ -46,15 +46,16 @@
 </select>
 
 
-    <select id="selectMerchantUsage" resultType="map">
+    <select id="selectCategoryRatio" resultType="map">
         SELECT
-            m.merchant_name as name,
+            c.category_name as name,
             COUNT(*) as value
         FROM T_TransactionHistory th
         JOIN T_Merchant m ON th.merchant_code = m.merchant_code
+        JOIN T_Brand b ON m.brand_code = b.brand_code
+        JOIN T_Category c ON b.category_code = c.category_code
         WHERE th.status = 'S'
-        GROUP BY m.merchant_name
-        ORDER BY value DESC
+        GROUP BY c.category_name
     </select>
 
 </mapper>
