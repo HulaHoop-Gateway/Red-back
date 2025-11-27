@@ -21,4 +21,26 @@ public class MerchantController {
         PageResponseDTO<MerchantDTO> result = merchantService.getMerchants(pageRequestDTO);
         return ResponseEntity.ok(result);
     }
+
+    // ✅ 가맹점 생성
+    @PostMapping
+    public ResponseEntity<String> createMerchant(@RequestBody MerchantDTO merchantDTO) {
+        merchantService.createMerchant(merchantDTO);
+        return ResponseEntity.ok("가맹점이 생성되었습니다.");
+    }
+
+    // ✅ 가맹점 삭제
+    @DeleteMapping("/{merchantCode}")
+    public ResponseEntity<String> deleteMerchant(@PathVariable String merchantCode) {
+        merchantService.deleteMerchant(merchantCode);
+        return ResponseEntity.ok("가맹점이 삭제되었습니다.");
+    }
+
+    // ✅ 가맹점 수정
+    @PutMapping("/{merchantCode}")
+    public ResponseEntity<String> updateMerchant(@PathVariable String merchantCode, @RequestBody MerchantDTO merchantDTO) {
+        merchantDTO.setMerchantCode(merchantCode); // 경로 변수에서 받은 merchantCode를 DTO에 설정
+        merchantService.updateMerchant(merchantDTO);
+        return ResponseEntity.ok("가맹점이 성공적으로 수정되었습니다.");
+    }
 }

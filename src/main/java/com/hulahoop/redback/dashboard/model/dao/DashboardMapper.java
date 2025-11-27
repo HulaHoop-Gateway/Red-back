@@ -18,5 +18,5 @@ public interface DashboardMapper {
 
     List<Map<String, Object>> selectMonthlyTransactions();
 
-    List<Map<String, Object>> selectMerchantUsage();
+    List<Map<String, Object>> selectCategoryRatio();
 }
