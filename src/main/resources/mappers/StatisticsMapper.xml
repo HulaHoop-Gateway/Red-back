@@ -15,44 +15,51 @@
         SELECT
         t.merchant_code AS merchantCode,
         COALESCE(m.merchant_name, '알 수 없음') AS merchantName,
-        DATE(t.payment_date) AS paymentDate,
+        <choose>
+            <when test="groupBy != null and groupBy == 'month'">
+                DATE_FORMAT(t.payment_date, '%Y-%m') AS paymentDate,
+            </when>
+            <otherwise>
+                DATE(t.payment_date) AS paymentDate,
+            </otherwise>
+        </choose>
 
-        COUNT(CASE WHEN t.status = 'S' THEN 1 END) AS transactionCount,
+        COUNT(CASE WHEN t.status IN ('S', 'P') THEN 1 END) AS transactionCount,
 
         ROUND(
-        (COUNT(CASE WHEN t.status = 'S' THEN 1 END) * 100.0) /
+        (COUNT(CASE WHEN t.status IN ('S', 'P') THEN 1 END) * 100.0) /
         NULLIF((
         SELECT COUNT(*)
         FROM T_TransactionHistory t2
-        WHERE t2.status = 'S'
+        WHERE t2.status IN ('S', 'P')
         <if test="startDate != null and endDate != null">
             AND t2.payment_date BETWEEN #{startDate} AND #{endDate}
         </if>
         ), 0)
         , 2) AS transactionRatio,
 
-        SUM(CASE WHEN t.status = 'S' THEN t.amount_used ELSE 0 END) AS totalAmount,
+        SUM(CASE WHEN t.status IN ('S', 'P') THEN t.amount_used ELSE 0 END) AS totalAmount,
 
         COUNT(CASE WHEN t.status = 'R' THEN 1 END) AS refundCount,
 
         SUM(CASE WHEN t.status = 'R' THEN t.amount_used ELSE 0 END) AS refundAmount,
 
         (
-        SUM(CASE WHEN t.status = 'S' THEN t.amount_used ELSE 0 END)
+        SUM(CASE WHEN t.status IN ('S', 'P') THEN t.amount_used ELSE 0 END)
         - SUM(CASE WHEN t.status = 'R' THEN t.amount_used ELSE 0 END)
         ) AS netAmount,
 
         ROUND(
         (
         (
-        SUM(CASE WHEN t.status = 'S' THEN t.amount_used ELSE 0 END)
+        SUM(CASE WHEN t.status IN ('S', 'P') THEN t.amount_used ELSE 0 END)
         - SUM(CASE WHEN t.status = 'R' THEN t.amount_used ELSE 0 END)
         ) * 100.0
         )
         /
         NULLIF((
         SELECT
-        SUM(CASE WHEN t3.status = 'S' THEN t3.amount_used ELSE 0 END)
+        SUM(CASE WHEN t3.status IN ('S', 'P') THEN t3.amount_used ELSE 0 END)
         - SUM(CASE WHEN t3.status = 'R' THEN t3.amount_used ELSE 0 END)
         FROM T_TransactionHistory t3
         <if test="startDate != null and endDate != null">
@@ -84,7 +91,14 @@
             AND b.brand_code = #{brandCode}
         </if>
 
-        GROUP BY t.merchant_code, m.merchant_name, DATE(t.payment_date)
+        <choose>
+            <when test="groupBy != null and groupBy == 'month'">
+                GROUP BY t.merchant_code, m.merchant_name, DATE_FORMAT(t.payment_date, '%Y-%m')
+            </when>
+            <otherwise>
+                GROUP BY t.merchant_code, m.merchant_name, DATE(t.payment_date)
+            </otherwise>
+        </choose>
 
         <choose>
             <when test="sort == 'transaction_asc'">ORDER BY transactionCount ASC</when>
@@ -124,6 +138,7 @@
         SELECT 1
         FROM T_TransactionHistory t
         LEFT JOIN T_Merchant m ON t.merchant_code = m.merchant_code
+        LEFT JOIN T_Brand b ON m.brand_code = b.brand_code   <!-- 🔥 추가됨 -->
 
         WHERE 1=1
         <if test="startDate != null and endDate != null">
@@ -135,12 +150,22 @@
         </if>
 
         <if test="categoryCode != null and categoryCode != ''">
-            AND m.brand_code IN (
-            SELECT brand_code FROM T_Brand WHERE category_code = #{categoryCode}
-            )
+            AND b.category_code = #{categoryCode}
         </if>
 
-        GROUP BY t.merchant_code, DATE(t.payment_date)
+        <!-- 🔥 brandCode 필터 추가 -->
+        <if test="brandCode != null and brandCode != ''">
+            AND b.brand_code = #{brandCode}
+        </if>
+
+        <choose>
+            <when test="groupBy != null and groupBy == 'month'">
+                GROUP BY t.merchant_code, DATE_FORMAT(t.payment_date, '%Y-%m')
+            </when>
+            <otherwise>
+                GROUP BY t.merchant_code, DATE(t.payment_date)
+            </otherwise>
+        </choose>
         ) AS sub
 
     </select>
