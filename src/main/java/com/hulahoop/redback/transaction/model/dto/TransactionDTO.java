@@ -1,5 +1,7 @@
 package com.hulahoop.redback.transaction.model.dto;
 
+import java.time.LocalDateTime;
+
 public class TransactionDTO {
 
     private int transactionNum;
@@ -9,13 +11,16 @@ public class TransactionDTO {
     private int amountUsed;
     private String paymentDate;
     private String status;
-    private String startDate;
-    private String endDate;
+    @com.fasterxml.jackson.annotation.JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime startDate;
+    @com.fasterxml.jackson.annotation.JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime endDate;
     private String merchantCode;
 
     private Integer originalTransactionNum;
 
-    public TransactionDTO() {}
+    public TransactionDTO() {
+    }
 
     public int getTransactionNum() {
         return transactionNum;
@@ -65,19 +70,19 @@ public class TransactionDTO {
         this.status = status;
     }
 
-    public String getStartDate() {
+    public LocalDateTime getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(String startDate) {
+    public void setStartDate(LocalDateTime startDate) {
         this.startDate = startDate;
     }
 
-    public String getEndDate() {
+    public LocalDateTime getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(String endDate) {
+    public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
     }
 

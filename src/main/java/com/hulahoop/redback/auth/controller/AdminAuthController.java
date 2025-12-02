@@ -1,6 +1,5 @@
 package com.hulahoop.redback.auth.controller;
 
-
 import com.hulahoop.redback.auth.model.service.AdminAuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,11 +19,10 @@ public class AdminAuthController {
     @PostMapping("/login")
     public ResponseEntity<?> adminLogin(@RequestBody Map<String, String> req) {
 
-        String token = adminAuthService.login(
+        Map<String, String> response = adminAuthService.login(
                 req.get("id"),
-                req.get("password")
-        );
+                req.get("password"));
 
-        return ResponseEntity.ok(Map.of("token", token));
+        return ResponseEntity.ok(response);
     }
 }

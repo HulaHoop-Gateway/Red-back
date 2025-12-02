@@ -6,6 +6,8 @@ import com.hulahoop.redback.security.AdminJwtUtil;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 @Service
 public class AdminAuthService {
 
@@ -14,14 +16,14 @@ public class AdminAuthService {
     private final AdminJwtUtil adminJwtUtil;
 
     public AdminAuthService(AuthMapper authMapper,
-                            BCryptPasswordEncoder encoder,
-                            AdminJwtUtil adminJwtUtil) {
+            BCryptPasswordEncoder encoder,
+            AdminJwtUtil adminJwtUtil) {
         this.authMapper = authMapper;
         this.encoder = encoder;
         this.adminJwtUtil = adminJwtUtil;
     }
 
-    public String login(String id, String password) {
+    public Map<String, String> login(String id, String password) {
 
         // 1️⃣ 관리자 조회
         AuthDTO admin = authMapper.findAdminById(id);
@@ -35,7 +37,11 @@ public class AdminAuthService {
             throw new RuntimeException("관리자 계정 또는 비밀번호 오류");
         }
 
-        // 3️⃣ JWT 발급
-        return adminJwtUtil.generateToken(admin.getId());
+        // 3️⃣ JWT 발급 및 관리자 정보 반환
+        String token = adminJwtUtil.generateToken(admin.getId());
+
+        return Map.of(
+                "token", token,
+                "adminName", admin.getName());
     }
 }
