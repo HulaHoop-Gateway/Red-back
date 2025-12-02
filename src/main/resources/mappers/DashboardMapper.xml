@@ -15,17 +15,26 @@
     </select>
 
     <select id="countTotalTransactions" resultType="long">
-        SELECT COUNT(*) FROM T_TransactionHistory
+        SELECT COUNT(*) FROM T_TransactionHistory t
+        WHERE t.status = 'S'
+          AND NOT EXISTS (
+              SELECT 1 FROM T_TransactionHistory cancel
+              WHERE cancel.original_transaction_num = t.transaction_num
+          )
     </select>
 
     <select id="selectDailyTransactions" resultType="map">
         SELECT
-            DATE_FORMAT(payment_date, '%m/%d') as date,
-            SUM(amount_used) as amount
-        FROM T_TransactionHistory
-        WHERE status = 'S'
-          AND payment_date >= CURDATE() - INTERVAL 6 DAY
-        GROUP BY DATE_FORMAT(payment_date, '%m/%d')
+            DATE_FORMAT(t.payment_date, '%m/%d') as date,
+            SUM(t.amount_used) as amount
+        FROM T_TransactionHistory t
+        WHERE t.status = 'S'
+          AND t.payment_date >= CURDATE() - INTERVAL 6 DAY
+          AND NOT EXISTS (
+              SELECT 1 FROM T_TransactionHistory cancel
+              WHERE cancel.original_transaction_num = t.transaction_num
+          )
+        GROUP BY DATE_FORMAT(t.payment_date, '%m/%d')
         ORDER BY date ASC
         LIMIT 7
     </select>
@@ -33,13 +42,17 @@
     <select id="selectMonthlyTransactions" resultType="map">
     <![CDATA[
         SELECT
-            DATE_FORMAT(payment_date, '%m월') as month,
-            SUM(amount_used) as amount
-        FROM T_TransactionHistory
-        WHERE status = 'S'
-          AND payment_date >= '2025-06-01'
-          AND payment_date <= CURDATE()
-        GROUP BY DATE_FORMAT(payment_date, '%m월')
+            DATE_FORMAT(t.payment_date, '%m월') as month,
+            SUM(t.amount_used) as amount
+        FROM T_TransactionHistory t
+        WHERE t.status = 'S'
+          AND t.payment_date >= '2025-06-01'
+          AND t.payment_date <= NOW()
+          AND NOT EXISTS (
+              SELECT 1 FROM T_TransactionHistory cancel
+              WHERE cancel.original_transaction_num = t.transaction_num
+          )
+        GROUP BY DATE_FORMAT(t.payment_date, '%m월')
         ORDER BY month ASC
             LIMIT 12
         ]]>
@@ -55,6 +68,10 @@
         JOIN T_Brand b ON m.brand_code = b.brand_code
         JOIN T_Category c ON b.category_code = c.category_code
         WHERE th.status = 'S'
+          AND NOT EXISTS (
+              SELECT 1 FROM T_TransactionHistory cancel
+              WHERE cancel.original_transaction_num = th.transaction_num
+          )
         GROUP BY c.category_name
     </select>
 
