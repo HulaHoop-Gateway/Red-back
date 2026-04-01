@@ -8,34 +8,33 @@ package com.hulahoop.redback.merchant.model.dto;
  */
 public class MerchantDTO {
 
-    // ✅ 가맹점 코드
+    // 가맹점 코드 식별자
     private String merchantCode;
 
-    // ✅ 가맹점 이름
+    // 가맹점 상호명
     private String merchantName;
 
-    // ✅ 사업자번호
+    // 사업자 등록 번호
     private String businessId;
 
-    // ✅ 카테고리명
+    // 카테고리 명칭
     private String categoryName;
 
-    // ✅ 등록일
+    // 등록 일자
     private String registrationDate;
 
-    // ✅ 종료일
+    // 계약 만료일자
     private String terminationDate;
 
-    // ✅ 계약상태
+    // 현재 계약 상태 유지 여부
     private String contractStatus;
 
-    // ✅ 카테고리 코드 (Movie, Bike 등)
+    // 시스템 내 카테고리 분류 코드 (Movie, Bike 등)
     private String categoryCode;
 
-    // 🔥🔥🔥 추가된 필드 (프론트 필터링에 반드시 필요)
-    private String brandCode;   // 예: NB01
-    private String brandName;   // 예: 노바시네마
-
+    // 프론트엔드 필터링용 외래 조인 필드
+    private String brandCode; // 예: NB01
+    private String brandName; // 예: 노바시네마
 
     // ───────────────────────────────
     // Getter / Setter
@@ -105,19 +104,19 @@ public class MerchantDTO {
         this.categoryCode = categoryCode;
     }
 
-    public String getBrandCode() {        // ← 추가
+    public String getBrandCode() {
         return brandCode;
     }
 
-    public void setBrandCode(String brandCode) { // ← 추가
+    public void setBrandCode(String brandCode) {
         this.brandCode = brandCode;
     }
 
-    public String getBrandName() {        // ← 추가
+    public String getBrandName() {
         return brandName;
     }
 
-    public void setBrandName(String brandName) { // ← 추가
+    public void setBrandName(String brandName) {
         this.brandName = brandName;
     }
 

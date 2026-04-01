@@ -38,30 +38,27 @@ public class TransactionService {
     // 신규: 페이징 + 정렬 + 날짜 필터 + merchant 필터 대응
     public PageResponseDTO<TransactionDTO> getTransactions(PageRequestDTO requestDTO) {
 
-        List<TransactionDTO> list =
-                transactionMapper.selectTransactionsPaged(requestDTO);
+        List<TransactionDTO> list = transactionMapper.selectTransactionsPaged(requestDTO);
 
-        long total =
-                transactionMapper.countTransactions(requestDTO);
+        long total = transactionMapper.countTransactions(requestDTO);
 
         return new PageResponseDTO<>(
                 list,
                 requestDTO.getPage(),
                 requestDTO.getSize(),
-                total
-        );
+                total);
     }
 
-    // ✅ phoneNum을 memberCode로 변환, merchant_name을 merchant_code로 변환, paymentDate 설정
+    // 외래키 맵핑 편의 로직 (외부에서 덤프된 전화번호/가맹점명 기반으로 식별 코드 역순환 조회 및 날짜 자동 세팅)
     public int insertTransaction(TransactionDTO dto) {
         // phoneNum이 있고 memberCode가 없으면 phoneNum으로 memberCode 조회
-        if (dto.getPhoneNum() != null && !dto.getPhoneNum().isEmpty() 
+        if (dto.getPhoneNum() != null && !dto.getPhoneNum().isEmpty()
                 && (dto.getMemberCode() == null || dto.getMemberCode().isEmpty())) {
             String memberCode = memberMapper.findMemberCodeByPhone(dto.getPhoneNum());
             if (memberCode != null) {
                 dto.setMemberCode(memberCode);
             } else {
-                log.warn("⚠️ memberCode 조회 실패: phoneNum={}", dto.getPhoneNum());
+                log.warn("전화번호 기반 회원코드 조회 매칭 실패: phoneNum={}", dto.getPhoneNum());
             }
         }
 
@@ -71,11 +68,12 @@ public class TransactionService {
             // merchant_name으로 조회해서 실제 merchant_code로 변환
             String actualMerchantCode = merchantMapper.findMerchantCodeByName(dto.getMerchantCode());
             if (actualMerchantCode != null && !actualMerchantCode.isEmpty()) {
-                log.info("✅ merchant_name을 merchant_code로 변환: {} -> {}", dto.getMerchantCode(), actualMerchantCode);
+                log.info("가맹점 직관 명칭을 실제 DB 식별코드(merchant_code)로 변환 완료: {} -> {}", dto.getMerchantCode(),
+                        actualMerchantCode);
                 dto.setMerchantCode(actualMerchantCode);
             } else {
                 // 변환 실패 시 원래 값이 이미 merchant_code일 수도 있으므로 그대로 사용
-                log.warn("⚠️ merchant_name을 merchant_code로 변환 실패: {}, 원래 값 사용", dto.getMerchantCode());
+                log.warn("입력된 문자열이 가맹점명(merchant_name)이 아니라 이미 코드 포맷일 수 있으므로 그대로 채용 처리: {}", dto.getMerchantCode());
             }
         }
 
