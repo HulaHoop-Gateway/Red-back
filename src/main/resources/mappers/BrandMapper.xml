@@ -4,6 +4,8 @@
 
 <mapper namespace="com.hulahoop.redback.monitor.model.dao.BrandMapper">
 
+    <!-- T_Brand에서 브랜드명/카테고리명 키워드 필터를 지원하는 페이징 조회
+         결과는 서비스에서 yml 서버 URL 정보와 병합되어 프론트에 리턴됨 -->
     <select id="selectServersPaged"
             parameterType="com.hulahoop.redback.common.paging.dto.PageRequestDTO"
             resultType="map">
@@ -29,6 +31,7 @@
         LIMIT #{size} OFFSET #{offset}
     </select>
 
+    <!-- 페이징네이션을 위한 전체 브랜드 수 카운트 (동일 키워드 조건 적용) -->
     <select id="countServers"
             parameterType="com.hulahoop.redback.common.paging.dto.PageRequestDTO"
             resultType="long">

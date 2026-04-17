@@ -5,7 +5,7 @@
 
 <mapper namespace="com.hulahoop.redback.merchant.model.dao.MerchantMapper">
 
-    <!-- ✅ 페이징 + 검색 (keyword optional) -->
+    <!-- 전역 페이징 및 키워드 검색 지원 쿼리 (키워드 nullable) -->
     <select id="selectMerchantsPaged"
             parameterType="com.hulahoop.redback.common.paging.dto.PageRequestDTO"
             resultType="com.hulahoop.redback.merchant.model.dto.MerchantDTO">
@@ -40,7 +40,7 @@
     </select>
 
 
-    <!-- ✅ 총 개수 조회 (동일 조건 적용) -->
+    <!-- 페이징네이션을 위한 전체 페이지 카운트 집계 쿼리 (검색조건 포함) -->
     <select id="countMerchants"
             parameterType="com.hulahoop.redback.common.paging.dto.PageRequestDTO"
             resultType="long">
@@ -63,7 +63,7 @@
     </select>
 
 
-    <!-- ✅ 가맹점명 → merchant_code 조회 -->
+    <!-- 직관적 가맹점명으로 물리 식별코드(merchant_code) 단건 조회 -->
     <select id="findMerchantCodeByName"
             resultType="string"
             parameterType="string">
@@ -73,7 +73,7 @@
             LIMIT 1
     </select>
 
-    <!-- ✅ 가맹점 생성 -->
+    <!-- 신규 가맹점 데이터 인서트 로직 -->
     <insert id="insertMerchant" parameterType="com.hulahoop.redback.merchant.model.dto.MerchantDTO">
         INSERT INTO T_Merchant (
             merchant_code,
@@ -94,13 +94,13 @@
         )
     </insert>
 
-    <!-- ✅ 가맹점 삭제 -->
+    <!-- 상점 물리 삭제 로직 -->
     <delete id="deleteMerchant" parameterType="string">
         DELETE FROM T_Merchant
         WHERE merchant_code = #{merchantCode}
     </delete>
 
-    <!-- ✅ 가맹점 수정 -->
+    <!-- 상점 정보 갱신 처리 -->
     <update id="updateMerchant" parameterType="com.hulahoop.redback.merchant.model.dto.MerchantDTO">
         UPDATE T_Merchant
         SET

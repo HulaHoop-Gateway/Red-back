@@ -2,18 +2,22 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hulahoop.redback.dashboard.model.dao.DashboardMapper">
 
+    <!-- T_Member 테이블 전체 회원 수 카운트 (status 퓸터 없이 전체) -->
     <select id="countTotalMembers" resultType="long">
         SELECT COUNT(*) FROM T_Member
     </select>
 
+    <!-- T_Merchant 테이블 지년 등록된 전체 가맹점 스카라 집계 -->
     <select id="countTotalMerchants" resultType="long">
         SELECT COUNT(*) FROM T_Merchant
     </select>
 
+    <!-- T_API 테이블의 call_count 합산 (COALESCE 로 널 값 방어) -->
     <select id="countTotalApiRequests" resultType="long">
         SELECT COALESCE(SUM(CAST(call_count AS UNSIGNED)), 0) FROM T_API
     </select>
 
+    <!-- 요효 완결 결제(S) 건수. 취소 레코드가 역참조하는 건 NOT EXISTS로 제외 -->
     <select id="countTotalTransactions" resultType="long">
         SELECT COUNT(*) FROM T_TransactionHistory t
         WHERE t.status = 'S'
@@ -23,6 +27,7 @@
           )
     </select>
 
+    <!-- 최근 6일 ~ 오늘까지 일별 결제액 합계. 빈 날짜는 서비스단에서 0으로 비움. status='S', 취소 제외 -->
     <select id="selectDailyTransactions" resultType="map">
         SELECT
             DATE_FORMAT(t.payment_date, '%m/%d') as date,
@@ -39,6 +44,7 @@
         LIMIT 7
     </select>
 
+    <!-- 2025-06월 ~ 현재까지의 월별 결제액 합계 데이터. 복수 꿀 및 > 부호는 CDATA 랩핑 사용 -->
     <select id="selectMonthlyTransactions" resultType="map">
     <![CDATA[
         SELECT
@@ -59,6 +65,7 @@
 </select>
 
 
+    <!-- 컨테츠 별 거래 건수 비율. T_Brand-T_Category 복합 JOIN으로 카테고리명 추쳙 -->
     <select id="selectCategoryRatio" resultType="map">
         SELECT
             c.category_name as name,
