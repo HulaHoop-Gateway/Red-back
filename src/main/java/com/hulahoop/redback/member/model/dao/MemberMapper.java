@@ -10,15 +10,15 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface MemberMapper {
 
-    // 전체 회원 전체 조회 (limit 없음, 하위 호환 전용)
+    // 전체 회원 조회, limit 없음 (이전 스펙 호환용)
     List<MemberDTO> selectAllMembers();
 
-    // 페이징 + 키워드 검색 조회 (PageRequestDTO 의 offset/size/keyword 활용)
+    // 페이징 + 키워드 검색 적용 회원 목록 조회 (offset, size, keyword 활용)
     List<MemberDTO> selectMembersPaged(PageRequestDTO requestDTO);
 
-    // 페이징네이션을 위한 전체 회원 긴수 집계 (동일 검색 조건 적용)
+    // 페이징 처리를 위한 전체 회원 수 집계 (검색 조건 동일 적용)
     long countMembers(PageRequestDTO requestDTO);
 
-    // 전화번호(폰니본)으로 member_code를 단건 조회 (Transaction 역사 읽기 시 활용)
+    // 전화번호로 member_code 단건 조회 (결제 내역 삽입 시 활용)
     String findMemberCodeByPhone(String phoneNumber);
 }

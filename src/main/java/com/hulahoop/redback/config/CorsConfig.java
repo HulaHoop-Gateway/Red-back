@@ -1,3 +1,6 @@
+// 이 파일은 현재 사용하지 않아 전체 주석 처리된 상태로 보관 중
+// SecurityConfig에서 CORS를 직접 설정하고 있어 별도 CorsConfig는 불필요
+
 // package com.hulahoop.redback.config;
 //
 // import org.springframework.context.annotation.Bean;
@@ -14,7 +17,7 @@
 // @Override
 // public void addCorsMappings(CorsRegistry registry) {
 // registry.addMapping("/api/**")
-// // Spring 6.x 이상 버전에 맞춘 allowedOriginPatterns 적용 (기존 * 대체)
+// // Spring 6.x 이상에서 allowedOrigins("*")는 Credentials와 함께 쓸 수 없어 패턴 방식으로 변경
 // .allowedOriginPatterns("http://localhost:3000")
 // .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 // .allowCredentials(true);

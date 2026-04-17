@@ -2,20 +2,20 @@ package com.hulahoop.redback.common.paging.dto;
 
 import java.util.List;
 
-/**
+/*
  * PageResponseDTO<T>
- * 프론트엔드로 페이징 처리된 목록 결과와 메타데이터(전체 건수, 페잊 수 등)를 반환하는 공통 응답 객체
- * - 제네릭 <T>를 통해 DTO 타입에 상관없이 범용적으로 사용 가능
+ * 페이징 처리된 목록 결과와 메타 정보를 함께 프론트에 반환하는 공통 응답 객체
+ * 제네릭 타입 T를 사용하므로 어떤 DTO 타입이든 재사용할 수 있다
  */
 public class PageResponseDTO<T> {
 
-    private List<T> content; // 실제 목록 데이터
-    private int page; // 현재 페이지 번호
-    private int size; // 페이지당 개수
-    private long totalElements; // 전체 데이터 건수
-    private int totalPages; // 계산된 전체 페이지 수
+    private List<T> content;      // 실제 목록 데이터
+    private int page;             // 현재 페이지 번호
+    private int size;             // 페이지당 데이터 개수
+    private long totalElements;   // 전체 데이터 건수
+    private int totalPages;       // 전체 페이지 수 (totalElements / size 올림 계산)
 
-    // 생성자에서 totalElements와 size를 활용해 totalPages 자동 계산
+    // 생성자 안에서 totalPages를 자동으로 계산해 저장
     public PageResponseDTO(List<T> content, int page, int size, long totalElements) {
         this.content = content;
         this.page = page;

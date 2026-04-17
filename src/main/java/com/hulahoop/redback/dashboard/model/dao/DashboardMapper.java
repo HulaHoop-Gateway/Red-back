@@ -8,24 +8,24 @@ import java.util.Map;
 @Mapper
 public interface DashboardMapper {
 
-    // T_Member 테이블 전체 로우 수 체크 (유효 또는 탈퇴 회원 로우 포함)
+    // T_Member 전체 행 수를 센다 (탈퇴 회원 포함)
     long countTotalMembers();
 
-    // T_Merchant 테이블 전체 가맹점 등록 수 집계
+    // T_Merchant 전체 가맹점 등록 수를 집계한다
     long countTotalMerchants();
 
-    // T_API 테이블에서 call_count 합산 (COALESCE 널 방어 포함)
+    // T_API 테이블의 call_count 합산 (NULL 방어를 위해 COALESCE 적용)
     long countTotalApiRequests();
 
-    // 요효 결제(S) 건수 집계, 취소된 건 포함 안 시킴로 NOT EXISTS 필터 적용
+    // 완료 상태(S) 결제 건수만 집계하고, 취소 내역은 제외한다
     long countTotalTransactions();
 
-    // 최근 7일간 일별 결제액 합계 (빈 날짜는 상위 서비스에서 0으로 잡대하는 로직 병용)
+    // 최근 7일간 일별 결제 금액 합계를 조회 (비는 날짜는 서비스에서 0으로 채운다)
     List<Map<String, Object>> selectDailyTransactions();
 
-    // 2025-06 ~ 현재까지 월별 결제액 합계 (status='S', 취소 제외)
+    // 특정 시점부터 현재까지 월별 결제 금액 합계를 조회 (status='S', 취소 제외)
     List<Map<String, Object>> selectMonthlyTransactions();
 
-    // 카테고리별 거래 건수 비율 (T_Category JOIN 활용)
+    // 카테고리별 거래 건수 비율 조회 (T_Category 조인 활용)
     List<Map<String, Object>> selectCategoryRatio();
 }

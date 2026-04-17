@@ -1,8 +1,7 @@
 package com.hulahoop.redback.dashboard.controller;
 
-// DashboardController
-// 어드민 대시보드 메인 화면에 필요한 요약 데이터를 먹여주는 API 엔드포인트
-// 회원 수, 가맹점 수, 결제 요약, 일/월별 그래프 데이터 등을 단건 API로 제공
+// 어드민 대시보드 메인 화면에 필요한 요약 통계 API 엔드포인트
+// 회원 수, 가맹점 수, 결제 요약, 일별/월별 그래프 데이터를 단건 API로 제공한다
 import com.hulahoop.redback.dashboard.model.dto.DashboardDTO;
 import com.hulahoop.redback.dashboard.service.DashboardService;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +21,7 @@ public class DashboardController {
     }
 
     // GET /api/v1/dashboard
-    // 대시보드에 필요한 모든 통계 데이터를 단건 DTO로 취합해 리턴
+    // 대시보드에 필요한 모든 통계를 하나의 DTO로 취합해 반환
     @GetMapping
     public ResponseEntity<DashboardDTO> getDashboardData() {
         System.out.println("Dashboard API called");
